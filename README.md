@@ -1,6 +1,6 @@
 # projeto_lembretinhos
 
-App para lembrar datas de aniversários dos amigos
+App para lembrar datas de aniversários
 
 ## Getting Started
 
