@@ -28,18 +28,18 @@ class ReminderHelper{
   //
   Future<Database> initDb() async{
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "reminder.bd");
+    final path = join(databasesPath, "reminder3.bd");
 
     return openDatabase(path, version: 1, onCreate: (Database db, int newerVersion) async {
       await db.execute(
         "CREATE TABLE $reminderTable($idColumn INTEGER PRIMARY KEY, $titleColumn TEXT,"
             "$descriptionColumn TEXT, $dateColumn TEXT, $timeColumn TEXT,"
-            "$yearlyColumn INTEGER, $alarmColumn INTEGER)"
+            "$yearlyColumn TEXT, $alarmColumn TEXT)"
       );
     });
   }
 
-  //create
+  //create-insert
   Future<Reminder> createReminder(Reminder reminder) async{
     Database dbReminder = await db;
     reminder.id = await dbReminder.insert(reminderTable, reminder.toMap());
