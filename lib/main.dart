@@ -5,7 +5,7 @@ import 'package:projeto_lembretinhos/ui/reminder_page.dart';
 
 void main(){
   runApp(MaterialApp(
-    home: ReminderPage(),
+    home: HomePage(),
     debugShowCheckedModeBanner: false,
 
   ));

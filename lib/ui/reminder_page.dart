@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:sqflite/sql.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 
 class ReminderPage extends StatefulWidget {
+
+  final Reminder reminder;
+
+  ReminderPage({this.reminder});//contrutor
+
   @override
   _ReminderPageState createState() => _ReminderPageState();
 }
@@ -14,37 +21,47 @@ class _ReminderPageState extends State<ReminderPage> {
   bool alamrVal = false;
   bool yearlyVal = false;
   bool value = true;
+  DateTime date1;
+  DateTime time1;
 
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _dateController = TextEditingController();
+
+  bool _reminderEdited = false;
+
+  Reminder _editedReminder;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    //senoa veio nenhum lembrete vai ser criado um novo
+    if(widget.reminder == null){
+      _editedReminder = Reminder();
+    } else {
+      _editedReminder = Reminder.fromMap(widget.reminder.toMap());
+
+      _titleController.text = _editedReminder.title;
+      _descriptionController.text = _editedReminder.description;
+      _dateController.text = _editedReminder.date;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
-            leading: Builder(
-              builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () { Scaffold.of(context).openDrawer(); },
-                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-                );
-              },
+            title: Text("Lembretinhos",
+                style: TextStyle( fontSize: 24, color: Colors.white)
             ),
-            title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
-            backgroundColor: Colors.deepPurpleAccent,
-            // centerTitle: true,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed:(){},
-              )
-            ],
-          ),
-          backgroundColor: Colors.white,
+            backgroundColor: Colors.deepPurpleAccent),
 
           floatingActionButton: FloatingActionButton(
             onPressed: (){},
-            child: Icon(Icons.add),
+            child: Icon(Icons.save),
             backgroundColor:  Colors.deepPurpleAccent,
           ),
 
@@ -61,6 +78,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   ),
                   Divider(),
                   TextField(
+                    controller: _titleController,
                     decoration: InputDecoration(
                       labelText: "Título",
                       labelStyle: TextStyle(color: Colors.black87),
@@ -71,6 +89,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   ),
                   Divider(),
                   TextField(
+                    controller: _descriptionController,
                     decoration: InputDecoration(
                       labelText: "Descrição",
                       labelStyle: TextStyle(color: Colors.black87),
@@ -80,15 +99,23 @@ class _ReminderPageState extends State<ReminderPage> {
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                   ),
                   Divider(),
-                  //mudar isso, colocar a data pra selecionar
-                  TextField(
+                  DateTimePickerFormField(
+                    controller: _dateController,
+                    inputType: InputType.date,
+                    style: TextStyle(color: Colors.black87, fontSize: 20),
+                    format: DateFormat("dd-MM-yyyy"),
+                    initialDate: DateTime(2019, 1, 1),
+                    editable: false,
                     decoration: InputDecoration(
-                      labelText: "Data",
+                      labelText: 'Data',
                       labelStyle: TextStyle(color: Colors.black87),
+                      hasFloatingPlaceholder: true,
                       border: OutlineInputBorder(),
                     ),
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color:  Colors.black87, fontSize: 20),
+                    onChanged: (dt) {
+                      setState(() => date1 = dt);
+                      print('Selected date: $date1');
+                    },
                   ),
                   Divider(),
                   Row(
@@ -106,7 +133,27 @@ class _ReminderPageState extends State<ReminderPage> {
                             color: Colors.black87
                         ),
                       ),
-                      IconButton(icon: Icon(Icons.access_time), onPressed: (){}, iconSize: 20,)
+                      IconButton(
+                        icon: Icon(Icons.access_time),
+                        onPressed: (){
+//                          DateTimePickerFormField(
+//                            inputType: InputType.time,
+//                            format: DateFormat("HH:mm"),
+//                            initialTime: TimeOfDay(hour: 5, minute: 5),
+//                            editable: false,
+//                            decoration: InputDecoration(
+//                                labelText: 'Time',
+//                                hasFloatingPlaceholder: false
+//                            ),
+//                            onChanged: (dt) {
+//                              setState(() => time1 = dt);
+//                              print('Selected date: $time1');
+//                              print('Hour: $time1.hour');
+//                              print('Minute: $time1.minute');
+//                            },
+//                          );
+                        },
+                        iconSize: 20,)
                     ],
                   ),
                   Row(

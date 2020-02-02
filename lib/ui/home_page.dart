@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
+import 'package:projeto_lembretinhos/ui/reminder_page.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomePage extends StatefulWidget {
@@ -61,7 +62,9 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.white,
         floatingActionButton: FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            _showReminderPage();
+          },
           child: Icon(Icons.add),
           backgroundColor:  Colors.deepPurpleAccent,
         ),
@@ -107,11 +110,16 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+
       ),
       onTap: (){
-
+        _showReminderPage(reminder: reminders[index]);
       },
     );
+  }
+
+  void _showReminderPage({Reminder reminder}){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder)));
   }
 
   void _getAllReminders(){
