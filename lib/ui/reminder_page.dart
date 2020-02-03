@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
-import 'package:sqflite/sql.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
@@ -27,6 +26,8 @@ class _ReminderPageState extends State<ReminderPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _dateController = TextEditingController();
+
+  final _titleFocus = FocusNode();
 
   bool _reminderEdited = false;
 
@@ -60,7 +61,13 @@ class _ReminderPageState extends State<ReminderPage> {
             backgroundColor: Colors.deepPurpleAccent),
 
           floatingActionButton: FloatingActionButton(
-            onPressed: (){},
+            onPressed: (){
+              if(_editedReminder.title != null && _editedReminder.title.isNotEmpty){
+                Navigator.pop(context, _editedReminder);//é akiq mandar pra la o q foi alterado
+              } else {
+                FocusScope.of(context).requestFocus(_titleFocus);
+              }
+            },
             child: Icon(Icons.save),
             backgroundColor:  Colors.deepPurpleAccent,
           ),
@@ -79,6 +86,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   Divider(),
                   TextField(
                     controller: _titleController,
+                    focusNode: _titleFocus,
                     decoration: InputDecoration(
                       labelText: "Título",
                       labelStyle: TextStyle(color: Colors.black87),
@@ -86,6 +94,12 @@ class _ReminderPageState extends State<ReminderPage> {
                     ),
                     textAlign: TextAlign.start,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
+                    onChanged: (text){
+                      _reminderEdited = true;
+                      setState(() {
+                        _editedReminder.title = text;
+                      });
+                    },
                   ),
                   Divider(),
                   TextField(
@@ -97,6 +111,12 @@ class _ReminderPageState extends State<ReminderPage> {
                     ),
                     textAlign: TextAlign.start,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
+                    onChanged: (text){
+                      _reminderEdited = true;
+                      setState(() {
+                        _editedReminder.description = text;
+                      });
+                    },
                   ),
                   Divider(),
                   DateTimePickerFormField(
@@ -112,10 +132,17 @@ class _ReminderPageState extends State<ReminderPage> {
                       hasFloatingPlaceholder: true,
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (dt) {
-                      setState(() => date1 = dt);
-                      print('Selected date: $date1');
+//                    onChanged: (dt) {
+//                      setState(() => date1 = dt);
+//                      print('Selected date: $date1');
+//                    },
+                    onChanged: (text){
+                      _reminderEdited = true;
+                      setState(() {
+                        _editedReminder.date =  text.toString();
+                      });
                     },
+
                   ),
                   Divider(),
                   Row(

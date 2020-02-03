@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:projeto_lembretinhos/ui/reminder_page.dart';
-import 'package:sqflite/sqflite.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,7 +9,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  ReminderHelper reminder = ReminderHelper();
+  ReminderHelper helper = ReminderHelper();
 
   List<Reminder> reminders = List();
 
@@ -19,7 +18,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
 
-  Reminder r = Reminder();
+ //   Reminder r = Reminder();
 //    r.title = "Aniversario Lug";
 //    r.description = "Niver";
 //    r.date = "08/02/2019";
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           ),
           title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
           backgroundColor: Colors.deepPurpleAccent,
-         // centerTitle: true,
+          // centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.search),
@@ -88,10 +87,11 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: EdgeInsets.only(left: 55),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(reminders[index].title ?? "",
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black54),
-                      textAlign: TextAlign.justify,
+                     // textAlign: TextAlign.start,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,12 +118,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showReminderPage({Reminder reminder}){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder)));
+  void _showReminderPage({Reminder reminder}) async{
+    final recReminder = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder) )
+    );//recreminder receber o contato q vem da tela de cad
+    if(recReminder != null){//se oq  vier nao for nulo
+      if(reminder != null){//e se o q vier ja for um contato (editado)
+        await helper.updateReminder(recReminder);//update ele
+      } else { //se eo q vir nao for anda q foi enviao entoa vaisalvar
+        await helper.createReminder(recReminder);
+      }
+      _getAllReminders();//carrega dnv // atualiza lista
+    }
   }
 
   void _getAllReminders(){
-    reminder.getAllReminders().then((list){
+    helper.getAllReminders().then((list){
       setState(() {
         reminders = list;
       });
