@@ -47,6 +47,10 @@ class _ReminderPageState extends State<ReminderPage> {
       _titleController.text = _editedReminder.title;
       _descriptionController.text = _editedReminder.description;
       _dateController.text = _editedReminder.date;
+
+     alamrVal =  _checkBool(_editedReminder.alarm, alamrVal);
+     yearlyVal = _checkBool(_editedReminder.yearly, yearlyVal);
+
     }
   }
 
@@ -55,10 +59,10 @@ class _ReminderPageState extends State<ReminderPage> {
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Lembretinhos",
-                style: TextStyle( fontSize: 24, color: Colors.white)
-            ),
-            backgroundColor: Colors.deepPurpleAccent),
+              title: Text("Lembretinhos",
+                  style: TextStyle( fontSize: 24, color: Colors.white)
+              ),
+              backgroundColor: Colors.deepPurpleAccent),
 
           floatingActionButton: FloatingActionButton(
             onPressed: (){
@@ -123,9 +127,8 @@ class _ReminderPageState extends State<ReminderPage> {
                     controller: _dateController,
                     inputType: InputType.date,
                     style: TextStyle(color: Colors.black87, fontSize: 20),
-                    format: DateFormat("dd-MM-yyyy"),
-                    initialDate: DateTime(2019, 1, 1),
-                    editable: false,
+                    format: DateFormat("yyyy-MM-dd"),
+                    initialDate: DateTime(2020, 1, 1),
                     decoration: InputDecoration(
                       labelText: 'Data',
                       labelStyle: TextStyle(color: Colors.black87),
@@ -142,16 +145,17 @@ class _ReminderPageState extends State<ReminderPage> {
                         _editedReminder.date =  text.toString();
                       });
                     },
-
                   ),
                   Divider(),
                   Row(
                     children: <Widget>[
                       Checkbox(
+
                           value: alamrVal,
                           onChanged: (bool value){
                             setState(() {
                               alamrVal=value;
+                              _editedReminder.alarm = alamrVal.toString();
                             });
                           }),
                       Text("Despertar",
@@ -190,6 +194,7 @@ class _ReminderPageState extends State<ReminderPage> {
                           onChanged: (bool value){
                             setState(() {
                               yearlyVal = value;
+                              _editedReminder.yearly = yearlyVal.toString();
                             });
                           }),
                       Text("Anual",
@@ -234,5 +239,14 @@ class _ReminderPageState extends State<ReminderPage> {
         ),
       ],
     );
+  }
+
+  bool _checkBool(String text, bool checkval){
+    if(text == 'true') {
+      checkval = true;
+    } else {
+      checkval = false;
+    }
+    return checkval;
   }
 }
