@@ -84,86 +84,56 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-           // Padding(
-          //    padding: EdgeInsets.all(10),
-           //   child:
-              ListTile(
-                // contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                  title:
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: Text(reminders[index].title ?? "",
-                      style: TextStyle(fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54 ),
-                    ),
+            // Padding(
+            //    padding: EdgeInsets.all(10),
+            //   child:
+            ListTile(
+              // contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+                title: Container(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Text(reminders[index].title ?? "",
+                    style: TextStyle(fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54 ),
                   ),
-                  subtitle:
-                  Container(
-                    padding: EdgeInsets.only(left: 10),
-                   child:
-                   Row(
-
-                     children: <Widget>[
-                       Text(reminders[index].date ?? "",
-                         style: TextStyle(fontSize: 18,
-                             fontWeight:  FontWeight.bold,
-                             color: Colors.black26),
-                       ),
-                       IconButton(icon: Icon(Icons.alarm), color: Colors.black26 ,onPressed: (){})
-                     ],
-                   ),
-
+                ),
+                subtitle: Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0.0,10.0,10.0,10.0),
+                        child:  Text(reminders[index].date ?? "",
+                          style: TextStyle(fontSize: 18,
+                              fontWeight:  FontWeight.bold,
+                              color: Colors.black26),
+                        ),
+                      ),
+                      Text(reminders[index].time ?? "",
+                        style: TextStyle(fontSize: 18,
+                            fontWeight:  FontWeight.bold,
+                            color: Colors.black26),
+                      ),
+                      IconButton(icon: Icon(Icons.alarm), color: Colors.black26 ,onPressed: (){})
+                    ],
                   ),
-                  trailing: Container(
-                    child: Column(
-                      children: <Widget>[
-                        IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
-                      ],
-                    ),
-                  )
 
-              ),
-         //   ),
+                ),
+                trailing: Container(
+                  child: Column(
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
+                    ],
+                  ),
+                )
+
+            ),
+            //   ),
           ],
         ),
-
-//        child: Padding(
-//          padding: EdgeInsets.all(10),
-//          child: Row(
-//            children: <Widget>[
-//              Padding(
-//                padding: EdgeInsets.only(left: 55),
-//                child: Column(
-//                  crossAxisAlignment: CrossAxisAlignment.start,
-//                  children: <Widget>[
-//                    Text(reminders[index].title ?? "",
-//                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black54),
-//                      // textAlign: TextAlign.start,
-//                    ),
-//                    Row(
-//                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                      children: <Widget>[
-//                        Text(reminders[index].date ?? "",
-//                          style: TextStyle(fontSize: 18,
-//                              fontWeight:  FontWeight.bold, color: Colors.black26),
-//                        ),
-//                        IconButton(icon: Icon(Icons.alarm), color: Colors.black26 ,onPressed: (){})
-//                      ],
-//                    ),
-//
-//                  ],
-//                ),
-//              ),
-//                 IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
-//            ],
-//          ),
-//
-//        ),
       ),
       onTap: (){
         // _showReminderPage(reminder: reminders[index]);
-
       },
     );
   }

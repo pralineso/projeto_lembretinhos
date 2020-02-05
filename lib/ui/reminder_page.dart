@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 
 class ReminderPage extends StatefulWidget {
@@ -25,9 +26,14 @@ class _ReminderPageState extends State<ReminderPage> {
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _dateController = TextEditingController();
+//  final _dateController = TextEditingController();
+  final _dateController = new MaskedTextController(text:'dd/MM/yyyy', mask: '00/00/0000');
+//  var controller = new MaskedTextController(text:"dd/MM/yyyy", mask: '00/00/0000');
 
   final _titleFocus = FocusNode();
+
+  String timeSelected;
+  var _time;
 
   bool _reminderEdited = false;
 
@@ -48,9 +54,12 @@ class _ReminderPageState extends State<ReminderPage> {
       _descriptionController.text = _editedReminder.description;
       _dateController.text = _editedReminder.date;
 
-     alamrVal =  _checkBool(_editedReminder.alarm, alamrVal);
-     yearlyVal = _checkBool(_editedReminder.yearly, yearlyVal);
+      timeSelected = _editedReminder.time;
+      alamrVal =  _checkBool(_editedReminder.alarm, alamrVal);
+      yearlyVal = _checkBool(_editedReminder.yearly, yearlyVal);
 
+
+      print(timeSelected);
     }
   }
 
@@ -114,6 +123,7 @@ class _ReminderPageState extends State<ReminderPage> {
                       border: OutlineInputBorder(),
                     ),
                     textAlign: TextAlign.start,
+//                    maxLines: 4,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                     onChanged: (text){
                       _reminderEdited = true;
@@ -123,26 +133,22 @@ class _ReminderPageState extends State<ReminderPage> {
                     },
                   ),
                   Divider(),
-                  DateTimePickerFormField(
+                  TextField(
+//                    controller: controller,
                     controller: _dateController,
-                    inputType: InputType.date,
-                    style: TextStyle(color: Colors.black87, fontSize: 20),
-                    format: DateFormat("yyyy-MM-dd"),
-                    initialDate: DateTime(2020, 1, 1),
                     decoration: InputDecoration(
-                      labelText: 'Data',
+                      labelText: "Data",
                       labelStyle: TextStyle(color: Colors.black87),
-                      hasFloatingPlaceholder: true,
                       border: OutlineInputBorder(),
                     ),
-//                    onChanged: (dt) {
-//                      setState(() => date1 = dt);
-//                      print('Selected date: $date1');
-//                    },
+                    textAlign: TextAlign.start,
+//                    maxLines: 4,
+                    style: TextStyle(color:  Colors.black87, fontSize: 20),
+                    keyboardType: TextInputType.number,
                     onChanged: (text){
                       _reminderEdited = true;
                       setState(() {
-                        _editedReminder.date =  text.toString();
+                        _editedReminder.date = text;
                       });
                     },
                   ),
@@ -150,7 +156,6 @@ class _ReminderPageState extends State<ReminderPage> {
                   Row(
                     children: <Widget>[
                       Checkbox(
-
                           value: alamrVal,
                           onChanged: (bool value){
                             setState(() {
@@ -164,27 +169,21 @@ class _ReminderPageState extends State<ReminderPage> {
                             color: Colors.black87
                         ),
                       ),
+
                       IconButton(
                         icon: Icon(Icons.access_time),
                         onPressed: (){
-//                          DateTimePickerFormField(
-//                            inputType: InputType.time,
-//                            format: DateFormat("HH:mm"),
-//                            initialTime: TimeOfDay(hour: 5, minute: 5),
-//                            editable: false,
-//                            decoration: InputDecoration(
-//                                labelText: 'Time',
-//                                hasFloatingPlaceholder: false
-//                            ),
-//                            onChanged: (dt) {
-//                              setState(() => time1 = dt);
-//                              print('Selected date: $time1');
-//                              print('Hour: $time1.hour');
-//                              print('Minute: $time1.minute');
-//                            },
-//                          );
+                          _selectedTime(context);
                         },
-                        iconSize: 20,)
+
+                        iconSize: 20,
+                      ),
+                      Text( timeSelected ?? "",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black87
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -249,4 +248,41 @@ class _ReminderPageState extends State<ReminderPage> {
     }
     return checkval;
   }
+
+//  Widget buildDateTextField(TextEditingController c){
+//    return TextField(
+//      controller: c,
+//      decoration: InputDecoration(
+//          labelText: "Data",
+//          labelStyle: TextStyle(color: Colors.amber),
+//          border: OutlineInputBorder(),
+//         ),
+//      style: TextStyle(color: Colors.amber, fontSize: 25.0),
+//      onChanged: null,
+//      keyboardType: TextInputType.number,
+//    );
+//  }
+
+  Future<Null> _selectedTime(BuildContext context) async{
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if(picked != null && picked != _time){
+      setState(() {
+        _time = picked;
+      });
+    }
+    // print(_time.toString().substring(9));
+    timeSelected = _time.toString().substring(9);
+
+    setState(() {
+      _editedReminder.time = timeSelected;
+    });
+//    print("dentro da funaoo $timeSelected");
+  }
+
+
 }
+

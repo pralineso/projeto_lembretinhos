@@ -72,7 +72,7 @@ class ReminderHelper{
   Future<Reminder> getReminder(int id) async{
     Database dbReminder = await db;
     List<Map> maps = await dbReminder.query(reminderTable,
-    columns: [idColumn, titleColumn, descriptionColumn, dateColumn, titleColumn, yearlyColumn, alarmColumn],
+    columns: [idColumn, titleColumn, descriptionColumn, dateColumn, timeColumn, yearlyColumn, alarmColumn],
     where: "$idColumn = ?",
     whereArgs: [id]
     );
