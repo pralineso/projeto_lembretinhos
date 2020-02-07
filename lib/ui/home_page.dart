@@ -111,31 +111,7 @@ class _HomePageState extends State<HomePage> {
                 trailing: Container(
                   child: Column(
                     children: <Widget>[
-//                      IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
-
-                      PopupMenuButton<Options>(
-                        icon: Icon(Icons.more_vert, color: Colors.black54),
-                        onSelected: (Options result) {
-                          setState(() {
-                            _actionOptions(context, index, _selection);
-                            //_selection = result;
-                          });
-                        },
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
-                          const PopupMenuItem<Options>(
-                            value: Options.view,
-                            child: Text('Visualizar', style: TextStyle(color: Colors.black54)),
-                          ),
-                          const PopupMenuItem<Options>(
-                            value: Options.edit,
-                            child: Text('Editar', style: TextStyle(color: Colors.black54)),
-                          ),
-                          const PopupMenuItem<Options>(
-                            value: Options.delete,
-                            child: Text('Excluir', style: TextStyle(color: Colors.black54)),
-                          ),
-                        ],
-                      ),
+                      IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
                     ],
                   ),
                 )
@@ -146,36 +122,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: (){
-        // _showReminderPage(reminder: reminders[index]);
+        _showReminderPage(reminder: reminders[index], view: true);
       },
     );
   }
 
-
-
-  void _actionOptions(BuildContext context, int index, Options result){
-    String r = result.toString();
-    switch (r){
-      case "Options.view":
-        {
-          print("visualizar");
-          break;
-        }
-      case "Options.edit":{
-        Navigator.pop(context);
-        _showReminderPage(reminder: reminders[index]);
-        break;
-      }
-      case "Options.delete":{
-        helper.deleteReminder(reminders[index].id);
-        setState(() {
-          reminders.removeAt(index);
-          Navigator.pop(context);
-        });
-        break;
-      }
-    }
-  }
 
   void _showOptions(BuildContext context, int index){
     showModalBottomSheet(
@@ -189,6 +140,21 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: FlatButton(
+                          child: Text("Visualizar",
+                            style: TextStyle(
+                                color: Colors.deepPurpleAccent,
+                                fontSize: 18
+                            ),
+                          ),
+                          onPressed: (){
+                            Navigator.pop(context);
+                            _showReminderPage(reminder: reminders[index], view: true);
+                          },
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: FlatButton(
@@ -231,15 +197,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showReminderPage({Reminder reminder}) async{
+  void _showReminderPage({Reminder reminder, bool view}) async{
     final recReminder = await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder) )
+        MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder, view: view) )
     );//recreminder receber o contato q vem da tela de cad
-    if(recReminder != null){//se oq  vier nao for nulo
-      if(reminder != null){//e se o q vier ja for um contato (editado)
-        await helper.updateReminder(recReminder);//update ele
-      } else { //se eo q vir nao for anda q foi enviao entoa vaisalvar
-        await helper.createReminder(recReminder);
+    if (view == null) {
+      if(recReminder != null){//se oq  vier nao for nulo
+        if(reminder != null) { //e se o q vier ja for um contato (editado)
+          await helper.updateReminder(recReminder); //update ele
+          print("fez upadt");
+        } else { //se eo q vir nao for anda q foi enviao entoa vaisalvar
+          await helper.createReminder(recReminder);
+        }
       }
       _getAllReminders();//carrega dnv // atualiza lista
     }

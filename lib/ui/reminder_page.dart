@@ -8,8 +8,9 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 class ReminderPage extends StatefulWidget {
 
   final Reminder reminder;
+  final bool view;
 
-  ReminderPage({this.reminder});//contrutor
+  ReminderPage({this.reminder, this.view});//contrutor
 
   @override
   _ReminderPageState createState() => _ReminderPageState();
@@ -34,6 +35,7 @@ class _ReminderPageState extends State<ReminderPage> {
 
   String timeSelected;
   var _time;
+  bool active=true;
 
   //bool _reminderEdited = false;
 
@@ -44,10 +46,11 @@ class _ReminderPageState extends State<ReminderPage> {
     // TODO: implement initState
     super.initState();
 
-    //senoa veio nenhum lembrete vai ser criado um novo
-    if(widget.reminder == null){
+
+    if(widget.reminder == null){ //senoa veio nenhum lembrete vai ser criado um novo
       _editedReminder = Reminder();
     } else {
+
       _editedReminder = Reminder.fromMap(widget.reminder.toMap());
 
       _titleController.text = _editedReminder.title;
@@ -57,7 +60,11 @@ class _ReminderPageState extends State<ReminderPage> {
       timeSelected = _editedReminder.time;
       alamrVal =  _checkBool(_editedReminder.alarm, alamrVal);
       yearlyVal = _checkBool(_editedReminder.yearly, yearlyVal);
+    }
 
+    //se veio a condicao do view verdadeira entao desativa os campos
+    if(widget.view == true) {
+      active = false;
     }
   }
 
@@ -72,14 +79,21 @@ class _ReminderPageState extends State<ReminderPage> {
               backgroundColor: Colors.deepPurpleAccent),
 
           floatingActionButton: FloatingActionButton(
-            onPressed: (){
-              if(_editedReminder.title != null && _editedReminder.title.isNotEmpty){
-                Navigator.pop(context, _editedReminder);//é akiq mandar pra la o q foi alterado
-              } else {
-                FocusScope.of(context).requestFocus(_titleFocus);
+            onPressed: () {
+              if (widget.view == null) {
+                if (_editedReminder.title != null &&
+                    _editedReminder.title.isNotEmpty) {
+                  Navigator.pop(context,
+                      _editedReminder); //é akiq mandar pra la o q foi alterado
+                } else {
+                  FocusScope.of(context).requestFocus(_titleFocus);
+                }
+              }else {
+                Navigator.pop(context,
+                    _editedReminder);
               }
             },
-            child: Icon(Icons.save),
+            child:  Icon(Icons.save),
             backgroundColor:  Colors.deepPurpleAccent,
           ),
 
@@ -97,6 +111,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   Divider(),
                   TextField(
                     controller: _titleController,
+                    enabled: active,
                     focusNode: _titleFocus,
                     decoration: InputDecoration(
                       labelText: "Título",
@@ -115,6 +130,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   Divider(),
                   TextField(
                     controller: _descriptionController,
+                    enabled: active,
                     decoration: InputDecoration(
                       labelText: "Descrição",
                       labelStyle: TextStyle(color: Colors.black87),
@@ -134,6 +150,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   TextField(
 //                    controller: controller,
                     controller: _dateController,
+                    enabled: active,
                     decoration: InputDecoration(
                       labelText: "Data",
                       labelStyle: TextStyle(color: Colors.black87),
@@ -155,6 +172,7 @@ class _ReminderPageState extends State<ReminderPage> {
                     children: <Widget>[
                       Checkbox(
                           value: alamrVal,
+                         // activeColor: Colors.grey,
                           onChanged: (bool value){
                             setState(() {
                               alamrVal=value;
