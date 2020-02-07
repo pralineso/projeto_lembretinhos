@@ -8,31 +8,20 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+enum Options { view, edit, delete }
+
 class _HomePageState extends State<HomePage> {
 
   ReminderHelper helper = ReminderHelper();
 
   List<Reminder> reminders = List();
 
+  var _selection;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    //   Reminder r = Reminder();
-//    r.title = "Aniversario Lug";
-//    r.description = "Niver";
-//    r.date = "08/02/2019";
-//    r.time = "00:00";
-//    r.yearly = "1";
-//    r.alarm = "0";
-//
-//    reminder.createReminder(r);
-
-//    reminder.getAllReminders().then((list){
-////      print(list);
-//      reminders = list;
-//    });
     _getAllReminders();
 
   }
@@ -41,24 +30,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () { Scaffold.of(context).openDrawer(); },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
-          },
-        ),
+        //menu lateral
+//        leading: Builder(
+//          builder: (BuildContext context) {
+//            return IconButton(
+//              icon: const Icon(Icons.menu),
+//              onPressed: () { Scaffold.of(context).openDrawer(); },
+//              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+//            );
+//          },
+//        ),
         title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
         backgroundColor: Colors.deepPurpleAccent,
         // centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed:(){},
-          )
-        ],
+        // botao de pesquisar
+//        actions: <Widget>[
+//          IconButton(
+//            icon: Icon(Icons.search),
+//            onPressed:(){},
+//          )
+//        ],
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
@@ -84,11 +75,8 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Padding(
-            //    padding: EdgeInsets.all(10),
-            //   child:
+
             ListTile(
-              // contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
                 title: Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: Text(reminders[index].title ?? "",
@@ -97,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.black54 ),
                   ),
                 ),
+
                 subtitle: Container(
                   padding: EdgeInsets.only(left: 10),
                   child: Row(
@@ -122,7 +111,31 @@ class _HomePageState extends State<HomePage> {
                 trailing: Container(
                   child: Column(
                     children: <Widget>[
-                      IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
+//                      IconButton(icon: Icon(Icons.more_vert), color: Colors.black54, onPressed:  (){_showOptions(context, index);}),
+
+                      PopupMenuButton<Options>(
+                        icon: Icon(Icons.more_vert, color: Colors.black54),
+                        onSelected: (Options result) {
+                          setState(() {
+                            _actionOptions(context, index, _selection);
+                            //_selection = result;
+                          });
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+                          const PopupMenuItem<Options>(
+                            value: Options.view,
+                            child: Text('Visualizar', style: TextStyle(color: Colors.black54)),
+                          ),
+                          const PopupMenuItem<Options>(
+                            value: Options.edit,
+                            child: Text('Editar', style: TextStyle(color: Colors.black54)),
+                          ),
+                          const PopupMenuItem<Options>(
+                            value: Options.delete,
+                            child: Text('Excluir', style: TextStyle(color: Colors.black54)),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 )
@@ -136,6 +149,32 @@ class _HomePageState extends State<HomePage> {
         // _showReminderPage(reminder: reminders[index]);
       },
     );
+  }
+
+
+
+  void _actionOptions(BuildContext context, int index, Options result){
+    String r = result.toString();
+    switch (r){
+      case "Options.view":
+        {
+          print("visualizar");
+          break;
+        }
+      case "Options.edit":{
+        Navigator.pop(context);
+        _showReminderPage(reminder: reminders[index]);
+        break;
+      }
+      case "Options.delete":{
+        helper.deleteReminder(reminders[index].id);
+        setState(() {
+          reminders.removeAt(index);
+          Navigator.pop(context);
+        });
+        break;
+      }
+    }
   }
 
   void _showOptions(BuildContext context, int index){
@@ -213,34 +252,4 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
-}
-
-
-Widget build(BuildContext context) {
-  return Center(
-    child: Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const ListTile(
-            leading: Icon(Icons.album),
-            title: Text('The Enchanted Nightingale'),
-            subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-          ),
-          ButtonBar(
-            children: <Widget>[
-              FlatButton(
-                child: const Text('BUY TICKETS'),
-                onPressed: () { /* ... */ },
-              ),
-              FlatButton(
-                child: const Text('LISTEN'),
-                onPressed: () { /* ... */ },
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
 }

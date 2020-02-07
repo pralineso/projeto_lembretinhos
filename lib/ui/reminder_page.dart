@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+//import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 
@@ -35,7 +35,7 @@ class _ReminderPageState extends State<ReminderPage> {
   String timeSelected;
   var _time;
 
-  bool _reminderEdited = false;
+  //bool _reminderEdited = false;
 
   Reminder _editedReminder;
 
@@ -58,8 +58,6 @@ class _ReminderPageState extends State<ReminderPage> {
       alamrVal =  _checkBool(_editedReminder.alarm, alamrVal);
       yearlyVal = _checkBool(_editedReminder.yearly, yearlyVal);
 
-
-      print(timeSelected);
     }
   }
 
@@ -108,7 +106,7 @@ class _ReminderPageState extends State<ReminderPage> {
                     textAlign: TextAlign.start,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                     onChanged: (text){
-                      _reminderEdited = true;
+                      //_reminderEdited = true;
                       setState(() {
                         _editedReminder.title = text;
                       });
@@ -126,7 +124,7 @@ class _ReminderPageState extends State<ReminderPage> {
 //                    maxLines: 4,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                     onChanged: (text){
-                      _reminderEdited = true;
+                     // _reminderEdited = true;
                       setState(() {
                         _editedReminder.description = text;
                       });
@@ -146,7 +144,7 @@ class _ReminderPageState extends State<ReminderPage> {
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                     keyboardType: TextInputType.number,
                     onChanged: (text){
-                      _reminderEdited = true;
+                    //  _reminderEdited = true;
                       setState(() {
                         _editedReminder.date = text;
                       });
