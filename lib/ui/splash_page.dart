@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/ui/home_page.dart';
 import 'package:flare_flutter/flare_actor.dart';
 
-class Splash extends StatefulWidget {
+class SplashPage extends StatefulWidget {
   @override
-  _SplashState createState() => _SplashState();
+  _SplashPageState createState() => _SplashPageState();
 }
 
-class _SplashState extends State<Splash> {
+class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

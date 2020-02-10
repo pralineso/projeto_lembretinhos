@@ -4,7 +4,7 @@ import 'package:projeto_lembretinhos/ui/splash_page.dart';
 
 void main(){
   runApp(MaterialApp(
-    home: Splash(),
+    home: SplashPage(),
     debugShowCheckedModeBanner: false,
 
   ));
