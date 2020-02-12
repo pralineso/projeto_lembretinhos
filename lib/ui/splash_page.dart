@@ -12,14 +12,24 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       // title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
-        backgroundColor: Colors.deepPurpleAccent,
+        // title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: Center(
-        child: Container(
-          width: 200,
-          height: 200,
-          child: FlareActor("assets/AnimacaoS2.flr", animation: "pulse"),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Feliz Aniversário Dirce!",
+              style: TextStyle(fontSize: 24, color: Colors.black87),
+
+            ),
+            Container(
+              width: 200,
+              height: 200,
+              child: FlareActor("assets/AnimacaoS2.flr", animation: "pulse"),
+            )
+          ],
         ),
       ),
     );

@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 //          },
 //        ),
         title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Colors.pinkAccent,
         // centerTitle: true,
         // botao de pesquisar
 //        actions: <Widget>[
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           _showReminderPage();
         },
         child: Icon(Icons.add),
-        backgroundColor:  Colors.deepPurpleAccent,
+        backgroundColor:  Colors.pinkAccent,
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
