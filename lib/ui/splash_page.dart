@@ -11,6 +11,10 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+       // title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
+        backgroundColor: Colors.deepPurpleAccent,
+      ),
       body: Center(
         child: Container(
           width: 200,
