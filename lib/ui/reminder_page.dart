@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:date_format/date_format.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:intl/intl.dart';
@@ -29,10 +33,12 @@ class _ReminderPageState extends State<ReminderPage> {
   final _descriptionController = TextEditingController();
 //  final _dateController = TextEditingController();
   final _dateController = new MaskedTextController(text:'dd/MM/yyyy', mask: '00/00/0000');
-//  var controller = new MaskedTextController(text:"dd/MM/yyyy", mask: '00/00/0000');
+
+
 
   final _titleFocus = FocusNode();
 
+  String dateSelected;
   String timeSelected;
   var _time;
   bool active=true;
@@ -137,36 +143,62 @@ class _ReminderPageState extends State<ReminderPage> {
                       border: OutlineInputBorder(),
                     ),
                     textAlign: TextAlign.start,
-//                    maxLines: 4,
+                    maxLines: 4,
                     style: TextStyle(color:  Colors.black87, fontSize: 20),
                     onChanged: (text){
                      // _reminderEdited = true;
+
                       setState(() {
                         _editedReminder.description = text;
                       });
                     },
                   ),
                   Divider(),
-                  TextField(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                          child: TextField(
 //                    controller: controller,
-                    controller: _dateController,
-                    enabled: active,
-                    decoration: InputDecoration(
-                      labelText: "Data",
-                      labelStyle: TextStyle(color: Colors.black87),
-                      border: OutlineInputBorder(),
-                    ),
-                    textAlign: TextAlign.start,
+                            controller: _dateController,
+                            enabled: false,
+                            decoration: InputDecoration(
+                              labelText: "Data",
+                              labelStyle: TextStyle(color: Colors.black87),
+                              border: OutlineInputBorder(),
+                            ),
+                            textAlign: TextAlign.start,
 //                    maxLines: 4,
-                    style: TextStyle(color:  Colors.black87, fontSize: 20),
-                    keyboardType: TextInputType.number,
-                    onChanged: (text){
-                    //  _reminderEdited = true;
-                      setState(() {
-                        _editedReminder.date = text;
-                      });
-                    },
+                            style: TextStyle(color:  Colors.black87, fontSize: 20),
+                            keyboardType: TextInputType.number,
+                            onChanged: (text){
+                              //  _reminderEdited = true;
+                              setState(() {
+                                _editedReminder.date = text;
+                              });
+                            },
+                          ),
+                      ),
+                      Container(
+                          padding: EdgeInsets.fromLTRB(5, 6, 5, 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.grey[400],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: (){
+                              _selectDate(context);
+                            },
+                          ),
+                      ),
+
+                    ],
                   ),
+
                   Divider(),
                   Row(
                     children: <Widget>[
@@ -297,6 +329,25 @@ class _ReminderPageState extends State<ReminderPage> {
       _editedReminder.time = timeSelected;
     });
 //    print("dentro da funaoo $timeSelected");
+  }
+
+  Future<Null> _selectDate(BuildContext context) async{
+    DateTime _date = DateTime.now();
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: _date,
+        firstDate: DateTime(2019),
+        lastDate: DateTime(2100)
+    );
+
+    if (picked !=null && picked != _date){
+      setState(() {
+        _date = picked;
+        dateSelected = formatDate(picked.toLocal(), [dd, '-', mm, '-', yyyy]).toString();
+        _dateController.text = dateSelected;
+        print(dateSelected);
+      });
+    }
   }
 
 
