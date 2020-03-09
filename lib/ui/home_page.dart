@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 //          },
 //        ),
         title: Text("Lembretinhos", style: TextStyle( fontSize: 24)),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Colors.pinkAccent,
         // centerTitle: true,
         // botao de pesquisar
 //        actions: <Widget>[
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           _showReminderPage();
         },
         child: Icon(Icons.add),
-        backgroundColor:  Colors.deepPurpleAccent,
+        backgroundColor:  Colors.pinkAccent,
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                         child: FlatButton(
                           child: Text("Visualizar",
                             style: TextStyle(
-                                color: Colors.deepPurpleAccent,
+                                color: Colors.pinkAccent,
                                 fontSize: 18
                             ),
                           ),
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                         child: FlatButton(
                           child: Text("Editar",
                             style: TextStyle(
-                                color: Colors.deepPurpleAccent,
+                                color: Colors.pinkAccent,
                                 fontSize: 18
                             ),
                           ),
@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                         child: FlatButton(
                           child: Text("Excluir",
                             style: TextStyle(
-                                color: Colors.deepPurpleAccent,
+                                color: Colors.pinkAccent,
                                 fontSize: 18
                             ),
                           ),
