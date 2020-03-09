@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:projeto_lembretinhos/plugin/notification_plugin.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -10,29 +11,15 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+ final _notificationPlugin = NotificationPlugin();
+  Future<List<PendingNotificationRequest>> notificationFuture;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
+    notificationFuture = _notificationPlugin.getSccheduledNotifications();
   }
 
-  Future onSelectNotification(String payload) {
-    debugPrint("payload : $payload");
-    showDialog(
-      context: context,
-      builder: (_) => new AlertDialog(
-        title: new Text('Notification'),
-        content: new Text('$payload'),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +30,7 @@ class _NotificationPageState extends State<NotificationPage> {
       body: Center(
         child: RaisedButton(
             onPressed: (){
-              showNotification();
+          //    showNotification();
             },
             child: Text('press')
         ),
@@ -51,10 +38,5 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-    showNotification() async{
-    var android = new AndroidNotificationDetails('channel id', 'channel NAME', 'CHANNEL DESCRPTION', importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var ios = new IOSNotificationDetails();
-    var platform = new NotificationDetails(android, ios);
-    await flutterLocalNotificationsPlugin.show(0, 'Notification test', 'Flutter local notification', platform, payload: 'Notification test payload');
-  }
+
 }
