@@ -76,7 +76,7 @@ class _ReminderPageState extends State<ReminderPage> {
               title: Text("Lembretinhos",
                   style: TextStyle( fontSize: 24, color: Colors.white)
               ),
-              backgroundColor: Colors.pinkAccent),
+              backgroundColor: Colors.deepPurpleAccent),
 
           floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -94,7 +94,7 @@ class _ReminderPageState extends State<ReminderPage> {
               }
             },
             child:  Icon(Icons.save),
-            backgroundColor:  Colors.pinkAccent,
+            backgroundColor:  Colors.deepPurpleAccent,
           ),
 
           body: SingleChildScrollView(
