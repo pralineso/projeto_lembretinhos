@@ -200,17 +200,20 @@ class _HomePageState extends State<HomePage> {
   void _showReminderPage({Reminder reminder, bool view}) async{
     final recReminder = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder, view: view) )
-    );//recreminder receber o contato q vem da tela de cad
+    );//reminder receber o contato q vem da tela de cad
     if (view == null) {
       if(recReminder != null){//se oq  vier nao for nulo
         if(reminder != null) { //e se o q vier ja for um contato (editado)
           await helper.updateReminder(recReminder); //update ele
-          print("fez upadt");
-        } else { //se eo q vir nao for anda q foi enviao entoa vaisalvar
+         // print("fez upadt");
+        } else { //se eo q vir nao for nada q foi enviado entao vai salvar
           await helper.createReminder(recReminder);
+
+          //e ai chama o schedulenotification
         }
       }
       _getAllReminders();//carrega dnv // atualiza lista
+      print(recReminder.toString());
     }
   }
 
@@ -221,4 +224,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
+
+
 }

@@ -40,6 +40,7 @@ class _ReminderPageState extends State<ReminderPage> {
 
   String dateSelected;
   String timeSelected;
+  var _date = DateTime.now();
   var _time;
   bool active=true;
 
@@ -161,7 +162,7 @@ class _ReminderPageState extends State<ReminderPage> {
                           child: TextField(
 //                    controller: controller,
                             controller: _dateController,
-                            enabled: false,
+                          //  readOnly: true,
                             decoration: InputDecoration(
                               labelText: "Data",
                               labelStyle: TextStyle(color: Colors.black87),
@@ -332,22 +333,36 @@ class _ReminderPageState extends State<ReminderPage> {
   }
 
   Future<Null> _selectDate(BuildContext context) async{
-    DateTime _date = DateTime.now();
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: _date,
         firstDate: DateTime(2019),
-        lastDate: DateTime(2100)
+        lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+              primaryColor: const Color(0xFF4A5BF6),
+              accentColor: const Color(0xFF4A5BF6)
+          ),
+          child: child,
+        );
+      },
     );
 
     if (picked !=null && picked != _date){
       setState(() {
         _date = picked;
-        dateSelected = formatDate(picked.toLocal(), [dd, '-', mm, '-', yyyy]).toString();
-        _dateController.text = dateSelected;
-        print(dateSelected);
+        dateSelected = formatDate(_date, [dd, '/', mm, '/', yyyy]).toString();
+        _dateController.text = dateSelected.toString();
       });
     }
+
+    setState(() {
+      _editedReminder.date = dateSelected.toString();
+    });
+
+//    print("Date _date" + _date.toString());
+//    print("Date selected " + dateSelected);
   }
 
 
