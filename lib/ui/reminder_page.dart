@@ -162,7 +162,7 @@ class _ReminderPageState extends State<ReminderPage> {
                           child: TextField(
 //                    controller: controller,
                             controller: _dateController,
-                          //  readOnly: true,
+                            readOnly: true,
                             decoration: InputDecoration(
                               labelText: "Data",
                               labelStyle: TextStyle(color: Colors.black87),

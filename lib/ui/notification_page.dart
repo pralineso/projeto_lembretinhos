@@ -11,6 +11,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 //import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 
+var _date = DateTime.now();
+var _time;
+String timeSelected;
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
@@ -40,12 +44,15 @@ class ReceivedNotification {
 /// Please download the complete example app from the GitHub repository where all the setup has been done
 Future<void> main() async {
 
+
+
+
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
 
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettingsAndroid = AndroidInitializationSettings('app-icon.png');
   // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
   // of the `IOSFlutterLocalNotificationsPlugin` class
   var initializationSettingsIOS = IOSInitializationSettings(
@@ -68,7 +75,7 @@ Future<void> main() async {
       });
   runApp(
     MaterialApp(
-      home: HomePage(),
+      home: NotificationPage(),
     ),
   );
 }
@@ -88,12 +95,12 @@ class PaddedRaisedButton extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class NotificationPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _NotificationPageState createState() => _NotificationPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _NotificationPageState extends State<NotificationPage> {
   final MethodChannel platform =
   MethodChannel('crossingthestreams.io/resourceResolver');
   @override
@@ -169,7 +176,7 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Plugin example app'),
+          title: Text('NotificationPage'),
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -180,23 +187,61 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: Text(
-                        'Tap on a notification when it appears to trigger navigation'),
+                    child: Text('Teste da notificação para o app Lembretinhos'),
                   ),
-                  PaddedRaisedButton(
-                    buttonText: 'Cancel notification',
-                    onPressed: () async {
-                      await _cancelNotification();
-                    },
-                  ),
-                  TextField(
 
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(5, 6, 5, 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.grey[400],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: (){
+                            _selectDate(context);
+                          },
+                        ),
+                      ),
+                      VerticalDivider(),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(5, 6, 5, 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.grey[400],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.access_time),
+                          onPressed: (){
+                            _selectedTime(context);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+//                 PaddedRaisedButton(
+//                    buttonText: 'Cancel notification',
+//                    onPressed: () async {
+//                      await _cancelNotification();
+//                    },
+//                  ),
                   PaddedRaisedButton(
                     buttonText:
                     'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
                     onPressed: () async {
-                      await _scheduleNotification();
+                      await _scheduleNotification(_date,_time);
                     },
                   ),
                   PaddedRaisedButton(
@@ -220,6 +265,54 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<Null> _selectDate(BuildContext context) async{
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2019),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+              primaryColor: const Color(0xFF4A5BF6),
+              accentColor: const Color(0xFF4A5BF6)
+          ),
+          child: child,
+        );
+      },
+    );
+
+    if (picked !=null && picked != _date){
+      setState(() {
+        _date = picked;
+      });
+    }
+
+//    await _scheduleNotification(_date);
+
+    print("Date _date" + _date.toString());
+  }
+
+  Future<Null> _selectedTime(BuildContext context) async{
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if(picked != null && picked != _time){
+      setState(() {
+        _time = picked;
+      });
+    }
+    // print(_time.toString().substring(9));
+    timeSelected = _time.toString().substring(9);
+
+    print("timeSelected =  $timeSelected");
+    print("timeSelected =  $timeSelected");
+
+    print("timeSelected =" +  _time.toString());
+  }
+
 
   Future<void> _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
@@ -227,11 +320,12 @@ class _HomePageState extends State<HomePage> {
 
 //androidAllowWhileIdle
   /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  Future<void> _scheduleNotification() async {
+  Future<void> _scheduleNotification(DateTime dia, TimeOfDay hora) async {
 
-    DateTime horario = new DateTime(2020,3,10,11,50,0,0,0);
-
-    var scheduledNotificationDateTime = horario;
+   // DateTime horario = new DateTime(2020,3,10,11,50,0,0,0);
+   // DateTime dateTimeShedule = new DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
+ //   print(dateTimeShedule.toString());
+    var scheduledNotificationDateTime = DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
     //DateTime.now().add(Duration(minutes: 2));
     var vibrationPattern = Int64List(4);
     vibrationPattern[0] = 0;
@@ -244,13 +338,12 @@ class _HomePageState extends State<HomePage> {
         'your other channel name',
         'your other channel description',
         icon: 'secondary_icon',
-        sound: 'slow_spring_board',
         largeIcon: 'sample_large_icon',
         largeIconBitmapSource: BitmapSource.Drawable,
-        vibrationPattern: vibrationPattern
+//        vibrationPattern: vibrationPattern
     );
     var iOSPlatformChannelSpecifics =
-    IOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
@@ -353,4 +446,7 @@ class SecondScreenState extends State<SecondScreen> {
       ),
     );
   }
+
+
+
 }
