@@ -22,8 +22,7 @@ FlutterLocalNotificationsPlugin();
 final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 BehaviorSubject<ReceivedNotification>();
 
-final BehaviorSubject<String> selectNotificationSubject =
-BehaviorSubject<String>();
+final BehaviorSubject<String> selectNotificationSubject = BehaviorSubject<String>();
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
@@ -43,9 +42,6 @@ class ReceivedNotification {
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
 Future<void> main() async {
-
-
-
 
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();

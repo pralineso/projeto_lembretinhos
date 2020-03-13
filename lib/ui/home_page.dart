@@ -1,9 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
+import 'package:projeto_lembretinhos/helpers/notification_helper.dart';
 import 'package:projeto_lembretinhos/ui/reminder_page.dart';
 
+
+
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/subjects.dart';
+
+
+var _date = DateTime.now();
+var _time;
+String timeSelected;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
+// Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+BehaviorSubject<ReceivedNotification>();
+
+final BehaviorSubject<String> selectNotificationSubject = BehaviorSubject<String>();
+
+NotificationAppLaunchDetails notificationAppLaunchDetails;
+
+class ReceivedNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  ReceivedNotification(
+      {@required this.id,
+        @required this.title,
+        @required this.body,
+        @required this.payload});
+}
+
 class HomePage extends StatefulWidget {
+  final MethodChannel platform = MethodChannel('crossingthestreams.io/resourceResolver');
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -12,16 +52,22 @@ enum Options { view, edit, delete }
 
 class _HomePageState extends State<HomePage> {
 
+
   ReminderHelper helper = ReminderHelper();
 
   List<Reminder> reminders = List();
 
   var _selection;
 
+
+
   @override
   void initState() {
     super.initState();
 
+    _initialization();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
     _getAllReminders();
 
   }
@@ -208,7 +254,6 @@ class _HomePageState extends State<HomePage> {
          // print("fez upadt");
         } else { //se eo q vir nao for nada q foi enviado entao vai salvar
           await helper.createReminder(recReminder);
-
           //e ai chama o schedulenotification
         }
       }
@@ -226,5 +271,76 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+  Future<void> _initialization() async{
+    // needed if you intend to initialize in the `main` function
+    WidgetsFlutterBinding.ensureInitialized();
+
+    notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+    var initializationSettingsAndroid = AndroidInitializationSettings('app-icon.png');
+    // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
+    // of the `IOSFlutterLocalNotificationsPlugin` class
+    var initializationSettingsIOS = IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        onDidReceiveLocalNotification:
+            (int id, String title, String body, String payload) async {
+          didReceiveLocalNotificationSubject.add(ReceivedNotification(
+              id: id, title: title, body: body, payload: payload));
+        });
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (String payload) async {
+          if (payload != null) {
+            debugPrint('notification payload: ' + payload);
+          }
+          selectNotificationSubject.add(payload);
+        });
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationSubject.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title)
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body)
+              : null,
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text('Ok'),
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                );
+              },
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectNotificationSubject.stream.listen((String payload) async {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    });
+  }
 
 }
+
+
