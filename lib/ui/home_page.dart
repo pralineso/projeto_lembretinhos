@@ -53,6 +53,7 @@ enum Options { view, edit, delete }
 class _HomePageState extends State<HomePage> {
 
 
+
   ReminderHelper helper = ReminderHelper();
 
   List<Reminder> reminders = List();
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _initialization();
+
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     _getAllReminders();
@@ -74,6 +75,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _initialization();
     return Scaffold(
       appBar: AppBar(
         //menu lateral
@@ -244,9 +246,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showReminderPage({Reminder reminder, bool view}) async{
+    Reminder reminderAux =  Reminder();
     final recReminder = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => ReminderPage(reminder: reminder, view: view) )
     );//reminder receber o contato q vem da tela de cad
+
     if (view == null) {
       if(recReminder != null){//se oq  vier nao for nulo
         if(reminder != null) { //e se o q vier ja for um contato (editado)
@@ -258,7 +262,16 @@ class _HomePageState extends State<HomePage> {
         }
       }
       _getAllReminders();//carrega dnv // atualiza lista
-      print(recReminder.toString());
+     reminderAux =  Reminder.fromMap(recReminder.toMap());
+      print("remindeAux = "+ reminderAux.date);
+   //   _date = DateTime.parse(reminderAux.date);
+    //  _time = TimeOfDay.fromDateTime(DateTime.parse(reminderAux.time));
+        _date = DateTime.now();
+        _time = TimeOfDay.now();
+  //    print("data = $_date");
+  //    print("time = $_time");
+      _scheduleNotification(_date,_time);
+
     }
   }
 
@@ -271,13 +284,13 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  Future<void> _initialization() async{
+  Future _initialization() async{
     // needed if you intend to initialize in the `main` function
-    WidgetsFlutterBinding.ensureInitialized();
+   // WidgetsFlutterBinding.ensureInitialized();
 
-    notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+   // notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-    var initializationSettingsAndroid = AndroidInitializationSettings('app-icon.png');
+    var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
     // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
     // of the `IOSFlutterLocalNotificationsPlugin` class
     var initializationSettingsIOS = IOSInitializationSettings(
@@ -341,6 +354,98 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Schedules a notification that specifies a different icon, sound and vibration pattern
+  Future<void> _scheduleNotification(DateTime dia, TimeOfDay hora) async {
+
+    // DateTime horario = new DateTime(2020,3,10,11,50,0,0,0);
+    // DateTime dateTimeShedule = new DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
+    //   print(dateTimeShedule.toString());
+    var scheduledNotificationDateTime = DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
+    //DateTime.now().add(Duration(minutes: 2));
+    var vibrationPattern = Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      icon: 'secondary_icon',
+      largeIcon: 'sample_large_icon',
+      largeIconBitmapSource: BitmapSource.Drawable,
+//        vibrationPattern: vibrationPattern
+    );
+    var iOSPlatformChannelSpecifics =
+    IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
+  Future<void> _checkPendingNotificationRequests() async {
+    var pendingNotificationRequests =
+    await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    for (var pendingNotificationRequest in pendingNotificationRequests) {
+      debugPrint(
+          'pending notification: [id: ${pendingNotificationRequest.id}, title: ${pendingNotificationRequest.title}, body: ${pendingNotificationRequest.body}, payload: ${pendingNotificationRequest.payload}]');
+    }
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+              '${pendingNotificationRequests.length} pending notification requests'),
+          actions: [
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: title != null ? Text(title) : null,
+        content: body != null ? Text(body) : null,
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                  //aki tem mandar pra pagina de visualização do lembrete ou a principal do app
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
 }
 
 
