@@ -16,7 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 
 
-var _date = DateTime.now();
+var _date;
 var _time;
 String timeSelected;
 
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     _getAllReminders();
-
+    _checkPendingNotificationRequests();
   }
 
   @override
@@ -109,13 +109,14 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.add),
         backgroundColor:  Colors.deepPurpleAccent,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: reminders.length,
-        itemBuilder: (context, index){
-          return _reminderCard(context, index);
-        },
-      ),
+      body:
+          ListView.builder(
+            padding: EdgeInsets.all(10),
+            itemCount: reminders.length,
+            itemBuilder: (context, index){
+              return _reminderCard(context, index);
+            },
+          ),
     );
   }
 
@@ -125,7 +126,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-
             ListTile(
                 title: Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -167,7 +167,6 @@ class _HomePageState extends State<HomePage> {
                 )
 
             ),
-            //   ),
           ],
         ),
       ),
@@ -264,18 +263,10 @@ class _HomePageState extends State<HomePage> {
         }
       }
       _getAllReminders();//carrega dnv // atualiza lista
-     reminderAux =  Reminder.fromMap(recReminder.toMap());
-      //print("remindeAux = "+ reminderAux.time);
+      reminderAux =  Reminder.fromMap(recReminder.toMap());
       _date =  convertStringFromDate(reminderAux.date);
-     // _date = DateTime.parse(reminderAux.date);
-     // _time = TimeOfDay.fromDateTime(DateTime.parse(reminderAux.time));
       _time = convertStringToTimeOfDay(reminderAux.time);
-    //    _date = DateTime.now();
-   //     _time = TimeOfDay.now();
-  //    print("data = $_date");
-     // print("time = $_time");
-   //   _scheduleNotification(_date,_time);
-
+      _scheduleNotification(_date,_time);
     }
   }
 
@@ -286,7 +277,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   TimeOfDay convertStringToTimeOfDay(String time) {
-    List str = time.substring(2, 6).split(':');
+    List str = time.substring(1, 6).split(':');
     TimeOfDay t = TimeOfDay(hour: int.parse(str[0]), minute: int.parse(str[1]));
     return t;
   }
@@ -376,7 +367,8 @@ class _HomePageState extends State<HomePage> {
     // DateTime horario = new DateTime(2020,3,10,11,50,0,0,0);
     // DateTime dateTimeShedule = new DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
     //   print(dateTimeShedule.toString());
-    var scheduledNotificationDateTime = DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
+    var scheduledNotificationDateTime = DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute, 0,0,0);
+    print("scheduleNotificationDateTime $scheduledNotificationDateTime");
     //DateTime.now().add(Duration(minutes: 2));
     var vibrationPattern = Int64List(4);
     vibrationPattern[0] = 0;

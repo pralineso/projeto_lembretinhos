@@ -326,10 +326,11 @@ class _ReminderPageState extends State<ReminderPage> {
     }
    //  print(_time.toString().substring(9));
     timeSelected = _time.toString().substring(9);
+   // print(timeSelected);
     setState(() {
       _editedReminder.time = timeSelected;
     });
-   // print("dentro da funaoo $timeSelected");
+    print("dentro da funaoo $timeSelected");
   }
 
   Future<Null> _selectDate(BuildContext context) async{
