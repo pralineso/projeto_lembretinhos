@@ -1,16 +1,17 @@
 import 'dart:math';
 
 import 'package:date_format/date_format.dart';
+import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
 import 'package:intl/intl.dart';
 //import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+//import 'package:intl/intl_browser.dart';
 
 
 class ReminderPage extends StatefulWidget {
-
   final Reminder reminder;
   final bool view;
 
@@ -31,8 +32,8 @@ class _ReminderPageState extends State<ReminderPage> {
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-//  final _dateController = TextEditingController();
-  final _dateController = new MaskedTextController(text:'dd/MM/yyyy', mask: '00/00/0000');
+  final _dateController = TextEditingController();
+ // final _dateController = new MaskedTextController(text:'dd-MM-yyyy', mask: '00-00-0000');
 
 
 
@@ -323,13 +324,12 @@ class _ReminderPageState extends State<ReminderPage> {
         _time = picked;
       });
     }
-    // print(_time.toString().substring(9));
+   //  print(_time.toString().substring(9));
     timeSelected = _time.toString().substring(9);
-
     setState(() {
       _editedReminder.time = timeSelected;
     });
-//    print("dentro da funaoo $timeSelected");
+   // print("dentro da funaoo $timeSelected");
   }
 
   Future<Null> _selectDate(BuildContext context) async{
@@ -352,13 +352,18 @@ class _ReminderPageState extends State<ReminderPage> {
     if (picked !=null && picked != _date){
       setState(() {
         _date = picked;
-        dateSelected = formatDate(_date, [dd, '/', mm, '/', yyyy]).toString();
+        dateSelected = formatDate(_date, [dd, '-', mm, '-', yyyy]).toString();
+ //       dateSelected = DateFormat.yMd().format(_date);
+
         _dateController.text = dateSelected.toString();
+    //    print(dateSelected);
+        //_dateController.text = _date.toString();
       });
     }
 
     setState(() {
       _editedReminder.date = dateSelected.toString();
+     // _dateController.text = _date.toString();
     });
 
 //    print("Date _date" + _date.toString());

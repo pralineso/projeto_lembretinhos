@@ -1,3 +1,5 @@
+import 'package:date_format/date_format.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_lembretinhos/helpers/reminder_helper.dart';
@@ -263,16 +265,30 @@ class _HomePageState extends State<HomePage> {
       }
       _getAllReminders();//carrega dnv // atualiza lista
      reminderAux =  Reminder.fromMap(recReminder.toMap());
-      print("remindeAux = "+ reminderAux.date);
-   //   _date = DateTime.parse(reminderAux.date);
-    //  _time = TimeOfDay.fromDateTime(DateTime.parse(reminderAux.time));
-        _date = DateTime.now();
-        _time = TimeOfDay.now();
+      //print("remindeAux = "+ reminderAux.time);
+      _date =  convertStringFromDate(reminderAux.date);
+     // _date = DateTime.parse(reminderAux.date);
+     // _time = TimeOfDay.fromDateTime(DateTime.parse(reminderAux.time));
+      _time = convertStringToTimeOfDay(reminderAux.time);
+    //    _date = DateTime.now();
+   //     _time = TimeOfDay.now();
   //    print("data = $_date");
-  //    print("time = $_time");
-      _scheduleNotification(_date,_time);
+     // print("time = $_time");
+   //   _scheduleNotification(_date,_time);
 
     }
+  }
+
+  DateTime convertStringFromDate(String date) {
+    List str = date.split("-");
+    var convertDate = str[2]+'-'+str[1]+"-"+str[0];
+    return DateTime.parse(convertDate);
+  }
+
+  TimeOfDay convertStringToTimeOfDay(String time) {
+    List str = time.substring(2, 6).split(':');
+    TimeOfDay t = TimeOfDay(hour: int.parse(str[0]), minute: int.parse(str[1]));
+    return t;
   }
 
   void _getAllReminders(){
