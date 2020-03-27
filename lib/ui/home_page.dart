@@ -18,6 +18,7 @@ import 'package:rxdart/subjects.dart';
 
 var _date;
 var _time;
+String _body;
 String timeSelected;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -266,7 +267,8 @@ class _HomePageState extends State<HomePage> {
       reminderAux =  Reminder.fromMap(recReminder.toMap());
       _date =  convertStringFromDate(reminderAux.date);
       _time = convertStringToTimeOfDay(reminderAux.time);
-      _scheduleNotification(_date,_time);
+      _body = reminderAux.title;
+      _scheduleNotification(_date,_time,body:_body);
     }
   }
 
@@ -362,8 +364,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  Future<void> _scheduleNotification(DateTime dia, TimeOfDay hora) async {
+  Future<void> _scheduleNotification(DateTime dia, TimeOfDay hora, {String body}) async {
 
+    if(body == null){
+      body = "Mensagem padrão";
+    }
     // DateTime horario = new DateTime(2020,3,10,11,50,0,0,0);
     // DateTime dateTimeShedule = new DateTime(dia.year, dia.month, dia.day, hora.hour, hora.minute);
     //   print(dateTimeShedule.toString());
@@ -380,7 +385,7 @@ class _HomePageState extends State<HomePage> {
       'your other channel id',
       'your other channel name',
       'your other channel description',
-      icon: 'secondary_icon',
+      icon: 'app_icon',
       largeIcon: 'sample_large_icon',
       largeIconBitmapSource: BitmapSource.Drawable,
 //        vibrationPattern: vibrationPattern
@@ -391,8 +396,8 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
         0,
-        'scheduled title',
-        'scheduled body',
+        'Lembre-se de ...',
+        body,
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }

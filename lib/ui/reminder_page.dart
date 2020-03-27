@@ -330,7 +330,7 @@ class _ReminderPageState extends State<ReminderPage> {
     setState(() {
       _editedReminder.time = timeSelected;
     });
-    print("dentro da funaoo $timeSelected");
+   // print("dentro da funaoo $timeSelected");
   }
 
   Future<Null> _selectDate(BuildContext context) async{
